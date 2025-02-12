@@ -66,6 +66,7 @@ jobs:
             cd ~/springboot-docker-compose
             git reset --hard
             git pull origin main
-            chmod -x deploy.sh
+            chmod 777 deploy.sh
+            export DOCKER_HUB_USERNAME="${DOCKER_HUB_USERNAME}"  # ✅ 환경 변수 설정
             ./deploy.sh
           EOF

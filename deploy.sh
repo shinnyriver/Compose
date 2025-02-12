@@ -2,25 +2,20 @@
 
 echo "🚀 배포 시작: $(date)"
 
-cd ~ || exit
+cd ~/springboot-docker-compose || exit
 
-# ✅ 우분투 컨테이너가 실행 중인지 확인
-if [ ! "$(docker ps -q -f name=ubuntu-container)" ]; then
-    echo "⚠️ 우분투 컨테이너가 실행되지 않음. 새 컨테이너 생성!"
-    docker run -dit --name ubuntu-container --privileged --restart always ubuntu:latest bash
-fi
+# 최신 코드 가져오기
+git pull origin main
 
-# ✅ 우분투 컨테이너 내부에 배포 스크립트 복사
-docker cp ~/springboot-docker-compose ubuntu-container:/home/
+# 기존 컨테이너 중지 및 삭제
+docker-compose down
+DOCKER_HUB_USERNAME=${DOCKER_HUB_USERNAME}
+# ✅ Docker Hub에서 최신 이미지 가져오기
+docker pull $DOCKER_HUB_USERNAME/mysql:latest
+docker pull $DOCKER_HUB_USERNAME/backend:latest
+docker pull $DOCKER_HUB_USERNAME/nginx:latest
+# ✅ 컨테이너 실행
+docker-compose up -d
 
-# ✅ 우분투 컨테이너에서 배포 실행
-docker exec -it ubuntu-container bash -c "
-    cd /home/springboot-docker-compose &&
-    git pull origin main &&
-    docker-compose down &&
-    docker-compose pull &&
-    docker-compose up -d &&
-    docker system prune -f
-"
-
-echo "✅ 배포 완료: $(date)"
+# 불필요한 Docker 이미지 삭제
+docker system prune -f
