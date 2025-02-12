@@ -2,28 +2,25 @@
 
 echo "🚀 배포 시작: $(date)"
 
-cd ~/springboot-docker-compose || exit
+cd ~ || exit
 
-# 최신 코드 가져오기
-git pull origin main
+# ✅ 우분투 컨테이너가 실행 중인지 확인
+if [ ! "$(docker ps -q -f name=ubuntu-container)" ]; then
+    echo "⚠️ 우분투 컨테이너가 실행되지 않음. 새 컨테이너 생성!"
+    docker run -dit --name ubuntu-container --privileged --restart always ubuntu:latest bash
+fi
 
-# ✅ Gradle 빌드 실행
-cd backend
-./gradlew clean build -x test --no-daemon --max-workers=1
-cd ..
+# ✅ 우분투 컨테이너 내부에 배포 스크립트 복사
+docker cp ~/springboot-docker-compose ubuntu-container:/home/
 
-# 기존 컨테이너 중지 및 삭제
-docker-compose down
-
-# ✅ Docker Hub에서 최신 이미지 가져오기
-docker pull your-dockerhub-username/backend:latest
-docker pull your-dockerhub-username/mysql:latest
-docker pull your-dockerhub-username/nginx:latest
-
-# ✅ 컨테이너 실행
-docker-compose up -d
-
-# 불필요한 Docker 이미지 삭제
-docker system prune -f
+# ✅ 우분투 컨테이너에서 배포 실행
+docker exec -it ubuntu-container bash -c "
+    cd /home/springboot-docker-compose &&
+    git pull origin main &&
+    docker-compose down &&
+    docker-compose pull &&
+    docker-compose up -d &&
+    docker system prune -f
+"
 
 echo "✅ 배포 완료: $(date)"
