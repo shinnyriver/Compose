@@ -2,12 +2,12 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:8.0
+    image: ${DOCKER_USERNAME}/mysql:latest
     container_name: mysql_container
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      MYSQL_DATABASE: test
     ports:
       - "3306:3306"
     networks:
@@ -16,7 +16,7 @@ services:
       - mysql_data:/var/lib/mysql
 
   backend:
-    build: ./backend
+    image: ${DOCKER_USERNAME}/backend:latest
     container_name: backend_container
     restart: always
     depends_on:
@@ -31,7 +31,7 @@ services:
       - "8080:8080"
 
   nginx:
-    build: ./nginx
+    image: ${DOCKER_USERNAME}/nginx:latest
     container_name: nginx_container
     restart: always
     depends_on:
