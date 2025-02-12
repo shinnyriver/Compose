@@ -1,7 +1,7 @@
-FROM --platform=linux/amd64 openjdk:17-jdk-slim
+FROM openjdk:17-alpine
 
-WORKDIR /app
+ARG JAR_FILE=build/libs/*.jar
 
-COPY target/*.jar app.jar
+COPY ${JAR_FILE} app.jar
 
-CMD ["java", "-jar", "app.jar"]
+CMD ["java", "-jar", "/app.jar"]
