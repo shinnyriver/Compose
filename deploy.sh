@@ -9,7 +9,7 @@ git pull origin main
 
 # ✅ Gradle 빌드 실행 (JAR 파일 생성)
 cd backend
-./gradlew clean build -x test
+./gradlew clean build -x test --no-daemon --max-workers=1
 cd ..
 
 # 기존 컨테이너 중지 및 삭제
