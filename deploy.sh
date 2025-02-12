@@ -19,7 +19,7 @@ docker pull $DOCKER_USERNAME/mysql:latest
 docker pull $DOCKER_USERNAME/backend:latest
 docker pull $DOCKER_USERNAME/nginx:latest
 # ✅ 컨테이너 실행
-docker-compose up -d
+docker-compose up --env_file .env up -d
 
 # 불필요한 Docker 이미지 삭제
 docker system prune -f
