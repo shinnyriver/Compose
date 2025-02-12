@@ -21,8 +21,7 @@ services:
     container_name: backend_container
     restart: always
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
