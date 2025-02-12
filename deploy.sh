@@ -15,7 +15,7 @@ cd ..
 # 기존 컨테이너 중지 및 삭제
 docker-compose down
 
-# 새 컨테이너 빌드 및 실행
+
 docker-compose up --build -d
 
 # 불필요한 Docker 이미지 삭제
