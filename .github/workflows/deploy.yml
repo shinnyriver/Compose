@@ -66,5 +66,6 @@ jobs:
             cd ~/springboot-docker-compose
             git reset --hard
             git pull origin main
+            chmod -x deploy.sh
             ./deploy.sh
           EOF
