@@ -14,6 +14,4 @@ docker-compose down
 
 docker-compose up --build -d
 
-docker system prune -f
-
 echo "Deploy Complete: $(date)"
