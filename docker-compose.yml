@@ -7,20 +7,22 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      MYSQL_DATABASE: test
+      MYSQL_DATABASE: mydb
     ports:
       - "3306:3306"
     networks:
       - mynetwork
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   backend:
     image: ${DOCKER_USERNAME}/backend:latest
     container_name: backend_container
     restart: always
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
