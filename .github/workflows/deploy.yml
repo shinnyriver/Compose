@@ -19,15 +19,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Restore Gradle Wrapper (if missing)
-        run: |
-          cd backend
-          if [ ! -f "gradlew" ]; then
-            echo "⚠️ Gradle Wrapper not found! Restoring..."
-            gradle wrapper
-          fi
-          chmod +x gradlew
-
       - name: Build with Gradle
         run: |
           cd backend
