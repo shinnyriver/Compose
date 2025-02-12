@@ -9,11 +9,11 @@ git pull origin main
 
 # 기존 컨테이너 중지 및 삭제
 docker-compose down
-DOCKER_HUB_USERNAME=${DOCKER_HUB_USERNAME}
+DOCKER_USERNAME=${DOCKER_USERNAME}
 # ✅ Docker Hub에서 최신 이미지 가져오기
-docker pull $DOCKER_HUB_USERNAME/mysql:latest
-docker pull $DOCKER_HUB_USERNAME/backend:latest
-docker pull $DOCKER_HUB_USERNAME/nginx:latest
+docker pull $DOCKER_USERNAME/mysql:latest
+docker pull $DOCKER_USERNAME/backend:latest
+docker pull $DOCKER_USERNAME/nginx:latest
 # ✅ 컨테이너 실행
 docker-compose up -d
 
