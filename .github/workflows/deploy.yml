@@ -61,13 +61,13 @@ jobs:
         env:
           HOST: ${{ secrets.EC2_HOST }}
           USER: ${{ secrets.EC2_USER }}
-          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USERNAME  }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
             cd ~/springboot-docker-compose
             git reset --hard
             git pull origin main
             chmod 777 deploy.sh
-            export DOCKER_HUB_USERNAME="${DOCKER_HUB_USERNAME}"  # ✅ 환경 변수 설정
+            export DOCKER_USERNAME="${DOCKER_USERNAME}"  # ✅ 환경 변수 설정
             ./deploy.sh
           EOF
