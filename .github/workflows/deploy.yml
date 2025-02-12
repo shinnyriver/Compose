@@ -13,8 +13,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build with Gradle
+        run: |
+          cd backend
+          ./gradlew clean build -x test --no-daemon --max-workers=1
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -23,37 +31,3 @@ jobs:
         run: |
           docker build -t your-dockerhub-username/backend:latest ./backend
           docker push your-dockerhub-username/backend:latest
-
-      - name: Build and Push MySQL
-        run: |
-          docker build -t your-dockerhub-username/mysql:latest ./mysql
-          docker push your-dockerhub-username/mysql:latest
-
-      - name: Build and Push Nginx
-        run: |
-          docker build -t your-dockerhub-username/nginx:latest ./nginx
-          docker push your-dockerhub-username/nginx:latest
-
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Set up SSH Key
-        env:
-          PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          HOST: ${{ secrets.EC2_HOST }}
-          USER: ${{ secrets.EC2_USER }}
-        run: |
-          echo "$PRIVATE_KEY" > private_key.pem
-          chmod 600 private_key.pem
-
-      - name: Deploy to EC2
-        env:
-          HOST: ${{ secrets.EC2_HOST }}
-          USER: ${{ secrets.EC2_USER }}
-        run: |
-          ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
-            cd ~/springboot-docker-compose
-            ./deploy.sh
-          EOF
