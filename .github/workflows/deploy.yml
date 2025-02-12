@@ -19,28 +19,37 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Restore Gradle Wrapper (if missing)
+        run: |
+          cd backend
+          if [ ! -f "gradlew" ]; then
+            echo "⚠️ Gradle Wrapper not found! Restoring..."
+            gradle wrapper
+          fi
+          chmod +x gradlew
+
       - name: Build with Gradle
         run: |
           cd backend
-          ./gradlew clean build -x test --no-daemon --max-workers=1
+          ./gradlew clean build -x test
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build and Push Backend
         run: |
-          docker build -t your-dockerhub-username/backend:latest ./backend
-          docker push your-dockerhub-username/backend:latest
+          docker build -t ${{secrets.DOCKER_USERNAME}}/backend:latest ./backend
+          docker push ${{secrets.DOCKER_USERNAME}}/backend:latest
 
       - name: Build and Push MySQL
         run: |
-          docker build -t your-dockerhub-username/mysql:latest ./mysql
-          docker push your-dockerhub-username/mysql:latest
+          docker build -t ${{secrets.DOCKER_USERNAME}}/mysql:latest ./mysql
+          docker push ${{secrets.DOCKER_USERNAME}}/mysql:latest
 
       - name: Build and Push Nginx
         run: |
-          docker build -t your-dockerhub-username/nginx:latest ./nginx
-          docker push your-dockerhub-username/nginx:latest
+          docker build -t ${{secrets.DOCKER_USERNAME}}/nginx:latest ./nginx
+          docker push ${{secrets.DOCKER_USERNAME}}/nginx:latest
 
   deploy:
     needs: build-and-push
